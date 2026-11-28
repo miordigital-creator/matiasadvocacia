@@ -168,3 +168,20 @@ cd <repository-name>
 npm i
 npm run dev
 ```
+
+
+---
+
+## Backend no Supabase — "Conte seu caso"
+
+O formulário "Conte seu caso" chama a Edge Function `resumir-caso` do Supabase:
+
+```text
+https://ririqcrrridviwcgdieb.supabase.co/functions/v1/resumir-caso
+```
+
+- O código que roda na função está em `docs/supabase/resumir-caso.ts`.
+- O passo a passo de publicação, os secrets (`GEMINI_API_KEY`, `ALLOWED_ORIGINS`)
+  e um teste com `curl` estão em `docs/supabase/README.md`.
+- A função usa Google Gemini e não depende de nenhum serviço da Lovable, então o
+  site pode ser hospedado na KingHost mantendo o Supabase como backend.
