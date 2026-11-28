@@ -5,7 +5,7 @@ const SUPABASE_ANON_KEY = (import.meta.env["VITE_SUPABASE_ANON_KEY"] || import.m
 type Resposta = { ok: true; resumo: string } | { ok: false; erro: string };
 
 async function resumirCaso(area: string, relato: string): Promise<Resposta> {
-  const res = await fetch(`${SUPABASE_URL}/functions/v1/resumir-caso`, {
+  const res = await fetch(`$https://ririqcrrridviwcgdieb.supabase.co/functions/v1/resumir-caso`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
