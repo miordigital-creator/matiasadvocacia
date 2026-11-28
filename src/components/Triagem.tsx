@@ -1,5 +1,23 @@
 import { useState } from "react";
-import { resumirCaso } from "@/lib/triagem.functions";
+const SUPABASE_URL = import.meta.env["VITE_SUPABASE_URL"] as string;
+const SUPABASE_ANON_KEY = (import.meta.env["VITE_SUPABASE_ANON_KEY"] || import.meta.env["VITE_SUPABASE_PUBLISHABLE_KEY"]) as string;
+
+type Resposta = { ok: true; resumo: string } | { ok: false; erro: string };
+
+async function resumirCaso(area: string, relato: string): Promise<Resposta> {
+  const res = await fetch(`${SUPABASE_URL}/functions/v1/resumir-caso`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      apikey: SUPABASE_ANON_KEY,
+      Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+    },
+    body: JSON.stringify({ area, relato }),
+  });
+  const json = (await res.json().catch(() => null)) as Resposta | null;
+  if (!json) throw new Error("Resposta inválida");
+  return json;
+}
 
 const WHATS = "https://wa.me/5551992491957";
 const AREA_TXT = { trabalhista: "Trabalhista", previdenciario: "Previdenciário", outros: "Outros" } as const;
@@ -33,7 +51,6 @@ function Markdown({ text }: { text: string }) {
 }
 
 export function Triagem() {
-  const resumir = resumirCaso;
   const [area, setArea] = useState<"trabalhista" | "previdenciario" | "outros">("outros");
   const [relato, setRelato] = useState("");
   const [loading, setLoading] = useState(false);
@@ -47,7 +64,7 @@ export function Triagem() {
     if (relato.trim().length < 30) return setErro("Descreva sua situação com pelo menos 30 caracteres.");
     setLoading(true);
     try {
-      const r = await resumir({ data: { area, relato } });
+      const r = await resumirCaso(area, relato);
       if (r.ok) setResumo(r.resumo);
       else setErro(r.erro);
     } catch {
